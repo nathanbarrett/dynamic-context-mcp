@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { ContextManager } from "./context.js";
+import { resolveContextDir } from "./utils.js";
 import path from "path";
 
 // Initialize the server
@@ -13,11 +14,8 @@ const server = new McpServer({
 
 // Determine where the markdown files live.
 // Users can pass an argument: npx @nathan/mcp ./my-context-folder
-// Default is a folder named ".ai-context" in the current working directory
-const args = process.argv.slice(2);
-const contextDir = args[0] 
-  ? path.resolve(process.cwd(), args[0]) 
-  : path.resolve(process.cwd(), ".ai-context");
+// Default is a folder named ".agent/rules" in the current working directory
+const contextDir = resolveContextDir(process.argv.slice(2), process.cwd());
 
 const contextManager = new ContextManager(contextDir);
 

@@ -1,7 +1,11 @@
 node_modules/
 GEMINI.md
+AGENTS.md
+CLAUDE.md
 dist/
 .DS_Store
 *.log
 coverage/
 .env
+
+backlog/

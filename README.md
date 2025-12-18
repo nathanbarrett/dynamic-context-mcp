@@ -23,9 +23,9 @@ When coding with AI, you often have specific guidelines, architectural patterns,
 
 ### 1. Prepare your Context Directory
 
-Create a folder (default is `.ai-context`) in your project root. Add markdown files with YAML frontmatter containing `patterns`:
+Create a folder (default is `.agent/rules`) in your project root. Add markdown files with YAML frontmatter containing `patterns`:
 
-**File:** `.ai-context/styles.md`
+**File:** `.agent/rules/styles.md`
 
 ```markdown
 ---
@@ -53,14 +53,14 @@ Add this to your MCP configuration file (e.g., `claude_desktop_config.json`):
       "args": [
         "-y",
         "@nathanbarrett/dynamic-context-mcp",
-        "/absolute/path/to/your/project/.ai-context"
+        "/absolute/path/to/your/project/.agent/rules"
       ]
     }
   }
 }
 ```
 
-_Note: The last argument is optional. If omitted, it looks for `.ai-context` in the directory where the MCP server runs._
+_Note: The last argument is optional. If omitted, it looks for `.agent/rules` in the directory where the MCP server runs._
 
 ---
 

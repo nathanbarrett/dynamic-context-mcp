@@ -4,7 +4,8 @@ import matter from 'gray-matter'; // Parses frontmatter
 import { minimatch } from 'minimatch'; // Matches globs
 
 interface ContextFile {
-  globs: string[];
+  trigger: 'glob' | 'always';
+  glob?: string;
   content: string;
 }
 
@@ -30,16 +31,47 @@ export class ContextManager {
       
       // gray-matter separates the YAML header from the body
       const parsed = matter(fileContent);
-      
-      // We expect a 'patterns' or 'globs' array in the YAML frontmatter
-      const globs = parsed.data.patterns || parsed.data.globs || [];
-      
-      if (Array.isArray(globs)) {
-        results.push({
-          globs: globs,
-          content: parsed.content
-        });
+      const data = parsed.data;
+
+      // Extract trigger
+      let trigger: 'glob' | 'always' = 'glob'; // Default to glob for backward compatibility if needed, or strict?
+      if (data.trigger === 'always') {
+        trigger = 'always';
+      } else if (data.trigger === 'glob') {
+        trigger = 'glob';
+      } else {
+         // Fallback or ignore? Let's assume files without explicit trigger might be old format or ignored.
+         // For now, if no trigger is specified, we check if there are globs.
+         if (data.globs || data.patterns) {
+             trigger = 'glob';
+         } else {
+             continue; // Skip file if no trigger and no globs
+         }
       }
+
+      let globPattern: string | undefined;
+
+      if (trigger === 'glob') {
+        // Handle 'globs' (plural in antigravity but we treat as single) or 'patterns'
+        const rawGlob = data.globs || data.patterns;
+        
+        if (typeof rawGlob === 'string') {
+            globPattern = rawGlob;
+        } else if (Array.isArray(rawGlob) && rawGlob.length > 0) {
+            // Take the first one if it's an array
+            globPattern = rawGlob[0];
+        }
+        
+        if (!globPattern) {
+            continue; // Skip if trigger is glob but no pattern found
+        }
+      }
+
+      results.push({
+        trigger: trigger,
+        glob: globPattern,
+        content: parsed.content
+      });
     }
 
     return results;
@@ -48,23 +80,31 @@ export class ContextManager {
   // The main function the AI will call indirectly
   public getContextForPath(targetPath: string): string {
     const contextFiles = this.getAllContextFiles();
-    let combinedContext = `Context for: ${targetPath}\n\n`;
-    let foundMatch = false;
+    
+    const alwaysMatches = contextFiles.filter(ctx => ctx.trigger === 'always');
+    const conditionalMatches = contextFiles.filter(ctx => {
+        if (ctx.trigger !== 'glob' || !ctx.glob) return false;
+        return minimatch(targetPath, ctx.glob);
+    });
 
-    for (const ctx of contextFiles) {
-      // Check if the target path matches ANY of the globs in this file
-      const isMatch = ctx.globs.some(pattern => minimatch(targetPath, pattern));
-      
-      if (isMatch) {
-        foundMatch = true;
+    if (alwaysMatches.length === 0 && conditionalMatches.length === 0) {
+      return "No dynamic context found for this path.";
+    }
+
+    let combinedContext = `Context for: ${targetPath}\n\n`;
+
+    // 1. Add 'always' matches first
+    for (const ctx of alwaysMatches) {
+        combinedContext += `--- START CONTEXT (ALWAYS) ---\n`;
+        combinedContext += ctx.content + "\n";
+        combinedContext += `--- END CONTEXT ---\n\n`;
+    }
+
+    // 2. Add 'glob' matches second
+    for (const ctx of conditionalMatches) {
         combinedContext += `--- START CONTEXT FROM MATCHING GLOB ---\n`;
         combinedContext += ctx.content + "\n";
         combinedContext += `--- END CONTEXT ---\n\n`;
-      }
-    }
-
-    if (!foundMatch) {
-      return "No dynamic context found for this path.";
     }
 
     return combinedContext;
