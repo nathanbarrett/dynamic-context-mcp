@@ -23,22 +23,39 @@ When coding with AI, you often have specific guidelines, architectural patterns,
 
 ### 1. Prepare your Context Directory
 
-Create a folder (default is `.agent/rules`) in your project root. Add markdown files with YAML frontmatter containing `patterns`:
+Create a folder (default is `.agent/rules`) in your project root. Add markdown files with YAML frontmatter containing `globs` (either a single string or a list).
+
+**Example 1: Single Glob**
 
 **File:** `.agent/rules/styles.md`
 
 ```markdown
 ---
-patterns:
-  - "**/*.css"
-  - "src/components/**/*.tsx"
+trigger: glob
+globs: "**/*.css"
 ---
 
-# UI Styling Rules
+# CSS Rules
 
-- Use Tailwind CSS for all styling.
-- Primary color is #ff4500.
-- Never use inline styles.
+- Use flexbox layout.
+```
+
+**Example 2: Multiple Globs**
+
+**File:** `.agent/rules/backend.md`
+
+```markdown
+---
+trigger: glob
+globs:
+  - "src/backend/**/*.ts"
+  - "config/**/*.json"
+---
+
+# Backend Rules
+
+- Ensure strict type checking.
+- Do not commit secrets in config files.
 ```
 
 ### 2. Configure your AI Client

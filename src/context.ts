@@ -5,7 +5,7 @@ import { minimatch } from 'minimatch'; // Matches globs
 
 interface ContextFile {
   trigger: 'glob' | 'always';
-  glob?: string;
+  globs: string[];
   content: string;
 }
 
@@ -42,34 +42,32 @@ export class ContextManager {
       } else {
          // Fallback or ignore? Let's assume files without explicit trigger might be old format or ignored.
          // For now, if no trigger is specified, we check if there are globs.
-         if (data.globs || data.patterns) {
+         if (data.globs) {
              trigger = 'glob';
          } else {
              continue; // Skip file if no trigger and no globs
          }
       }
 
-      let globPattern: string | undefined;
+      let globPatterns: string[] = [];
 
       if (trigger === 'glob') {
-        // Handle 'globs' (plural in antigravity but we treat as single) or 'patterns'
-        const rawGlob = data.globs || data.patterns;
+        const rawGlob = data.globs;
         
         if (typeof rawGlob === 'string') {
-            globPattern = rawGlob;
-        } else if (Array.isArray(rawGlob) && rawGlob.length > 0) {
-            // Take the first one if it's an array
-            globPattern = rawGlob[0];
+            globPatterns = [rawGlob];
+        } else if (Array.isArray(rawGlob)) {
+            globPatterns = rawGlob;
         }
         
-        if (!globPattern) {
+        if (globPatterns.length === 0) {
             continue; // Skip if trigger is glob but no pattern found
         }
       }
 
       results.push({
         trigger: trigger,
-        glob: globPattern,
+        globs: globPatterns,
         content: parsed.content
       });
     }
@@ -83,8 +81,9 @@ export class ContextManager {
     
     const alwaysMatches = contextFiles.filter(ctx => ctx.trigger === 'always');
     const conditionalMatches = contextFiles.filter(ctx => {
-        if (ctx.trigger !== 'glob' || !ctx.glob) return false;
-        return minimatch(targetPath, ctx.glob);
+        if (ctx.trigger !== 'glob' || ctx.globs.length === 0) return false;
+        // Check if path matches ANY of the globs
+        return ctx.globs.some(pattern => minimatch(targetPath, pattern));
     });
 
     if (alwaysMatches.length === 0 && conditionalMatches.length === 0) {
