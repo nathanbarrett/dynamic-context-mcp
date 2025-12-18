@@ -59,4 +59,22 @@ describe('ContextManager', () => {
     const context = emptyManager.getContextForPath('random.txt');
     expect(context).toBe('No dynamic context found for this path.');
   });
+
+  it('should support globs defined as a single string', () => {
+    const context = contextManager.getContextForPath('src/style.css');
+    expect(context).toContain('CSS Context');
+    expect(context).toContain('Use flexbox');
+  });
+
+  it('should support globs defined as an array', () => {
+    // Check .js match
+    const jsContext = contextManager.getContextForPath('src/app.js');
+    expect(jsContext).toContain('JavaScript Context');
+    expect(jsContext).toContain('Use modern JS features');
+
+    // Check .jsx match
+    const jsxContext = contextManager.getContextForPath('src/components/Button.jsx');
+    expect(jsxContext).toContain('JavaScript Context');
+    expect(jsxContext).toContain('Use modern JS features');
+  });
 });
