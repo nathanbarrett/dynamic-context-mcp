@@ -52,7 +52,7 @@ Add this to your MCP configuration file (e.g., `claude_desktop_config.json`):
       "command": "npx",
       "args": [
         "-y",
-        "@nathanbarrett/dynamic-context-mcp",
+        "dynamic-context-mcp",
         "/absolute/path/to/your/project/.agent/rules"
       ]
     }
