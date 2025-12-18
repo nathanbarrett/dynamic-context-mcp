@@ -58,6 +58,23 @@ globs:
 - Do not commit secrets in config files.
 ```
 
+**Example 3: Always Trigger**
+
+Use this for high-level rules that should apply to *every* file, such as general coding standards or project philosophy.
+
+**File:** `.agent/rules/general.md`
+
+```markdown
+---
+trigger: always
+---
+
+# General Guidelines
+
+- Write clean, commented code.
+- Follow SOLID principles.
+```
+
 ### 2. Configure your AI Client
 
 Add this to your MCP configuration file (e.g., `claude_desktop_config.json`):
@@ -78,6 +95,12 @@ Add this to your MCP configuration file (e.g., `claude_desktop_config.json`):
 ```
 
 _Note: The last argument is optional. If omitted, it looks for `.agent/rules` in the directory where the MCP server runs._
+
+### 3. Agent Configuration
+
+To ensure your AI agent uses this tool effectively, add the following instruction to your agent's system prompt or custom instructions (e.g., in `GEMINI.md`, `CLAUDE.md`, or your agent's settings):
+
+> **Important:** You must use the `get_context_for_file` tool before reading or editing any file. This will provide you with project-specific patterns, conventions, and architectural guidelines relevant to the file you are working on.
 
 ---
 
