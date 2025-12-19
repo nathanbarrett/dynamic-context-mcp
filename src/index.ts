@@ -20,11 +20,13 @@ const contextDir = resolveContextDir(process.argv.slice(2), process.cwd());
 const contextManager = new ContextManager(contextDir);
 
 // Define the Tool
-server.tool(
+server.registerTool(
   "get_context_for_file",
-  "Retrieves coding guidelines and context based on the file path provided. Call this before editing code.",
   {
-    filePath: z.string().describe("The file or folder path you are about to edit or create"),
+    description: "Retrieves coding guidelines and context based on the file path provided. Call this before editing code.",
+    inputSchema: {
+      filePath: z.string().describe("The file or folder path you are about to edit or create"),
+    },
   },
   async ({ filePath }) => {
     try {
