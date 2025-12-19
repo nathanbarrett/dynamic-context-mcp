@@ -60,7 +60,7 @@ globs:
 
 **Example 3: Always Trigger**
 
-Use this for high-level rules that should apply to *every* file, such as general coding standards or project philosophy.
+Use this for high-level rules that should apply to _every_ file, such as general coding standards or project philosophy.
 
 **File:** `.agent/rules/general.md`
 
@@ -87,7 +87,7 @@ Add this to your MCP configuration file (e.g., `claude_desktop_config.json`):
       "args": [
         "-y",
         "dynamic-context-mcp",
-        "/absolute/path/to/your/project/.agent/rules"
+        "/optional/absolute/path/to/your/project/.agent/rules"
       ]
     }
   }
@@ -96,11 +96,28 @@ Add this to your MCP configuration file (e.g., `claude_desktop_config.json`):
 
 _Note: The last argument is optional. If omitted, it looks for `.agent/rules` in the directory where the MCP server runs._
 
-### 3. Agent Configuration
+### 3. IMPORTANT: Agent Configuration
 
 To ensure your AI agent uses this tool effectively, add the following instruction to your agent's system prompt or custom instructions (e.g., in `GEMINI.md`, `CLAUDE.md`, or your agent's settings):
 
-> **Important:** You must use the `get_context_for_file` tool before reading or editing any file. This will provide you with project-specific patterns, conventions, and architectural guidelines relevant to the file you are working on.
+```
+<!-- DYNAMIC CONTEXT MCP GUIDELINES START -->
+
+<CRITICAL_INSTRUCTION>
+
+## DYNAMIC CONTEXT INSTRUCTIONS
+
+This project uses dynamic context mcp to deliver "just in time" context for files that you are about to read, create, or edit.
+
+**CRITICAL GUIDANCE**
+
+- Before you read, create, or edit a file, check for dynamic context by requesting the `dynamic-context.get_context_for_file` tool with the file path as input.
+- If dynamic context is available, read it carefully to understand important details about how to work with that file.
+
+</CRITICAL_INSTRUCTION>
+
+<!-- DYNAMIC CONTEXT MCP GUIDELINES END -->
+```
 
 ---
 
