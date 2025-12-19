@@ -9,7 +9,7 @@ import path from "path";
 // Initialize the server
 const server = new McpServer({
   name: "dynamic-context-mcp",
-  version: "1.0.3",
+  version: "1.0.4",
 });
 
 // Determine where the markdown files live.
@@ -20,11 +20,13 @@ const contextDir = resolveContextDir(process.argv.slice(2), process.cwd());
 const contextManager = new ContextManager(contextDir);
 
 // Define the Tool
-server.tool(
+server.registerTool(
   "get_context_for_file",
-  "Retrieves coding guidelines and context based on the file path provided. Call this before editing code.",
   {
-    filePath: z.string().describe("The file or folder path you are about to edit or create"),
+    description: "Retrieves coding guidelines and context based on the file path provided. Call this before editing code.",
+    inputSchema: {
+      filePath: z.string().describe("The file or folder path you are about to edit or create"),
+    },
   },
   async ({ filePath }) => {
     try {
