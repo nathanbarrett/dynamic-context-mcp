@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import path from 'path';
+import fs from 'fs';
+import os from 'os';
 import { ContextManager } from '../src/context';
 
 describe('ContextManager', () => {
@@ -76,5 +78,21 @@ describe('ContextManager', () => {
     const jsxContext = contextManager.getContextForPath('src/components/Button.jsx');
     expect(jsxContext).toContain('JavaScript Context');
     expect(jsxContext).toContain('Use modern JS features');
+  });
+
+  it('should handle invalid YAML gracefully', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gemini-test-'));
+    const badFile = path.join(tmpDir, 'bad.md');
+    fs.writeFileSync(badFile, '---\nglobs: *.php\n---\nBad content'); // invalid yaml
+    
+    const manager = new ContextManager(tmpDir);
+    const context = manager.getContextForPath('test.php');
+    
+    // Should now return context because we handle the unquoted glob
+    expect(context).toContain('Bad content');
+    expect(context).toContain('START CONTEXT FROM MATCHING GLOB PATTERN: *.php');
+    
+    // Cleanup
+    fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 });
