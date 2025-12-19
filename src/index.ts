@@ -9,7 +9,7 @@ import path from "path";
 // Initialize the server
 const server = new McpServer({
   name: "dynamic-context-mcp",
-  version: "1.0.5",
+  version: "1.0.6",
 });
 
 // Determine where the markdown files live.
