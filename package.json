@@ -1,6 +1,6 @@
 {
   "name": "dynamic-context-mcp",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "MCP server for dynamic context injection based on glob patterns",
   "main": "dist/index.js",
   "bin": {
@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && cp -r src/starter-packs dist/starter-packs",
     "test": "vitest run",
     "prepublishOnly": "npm run build"
   },

@@ -21,6 +21,14 @@ When coding with AI, you often have specific guidelines, architectural patterns,
 
 ## 📦 usage
 
+### Quick Start (instead of manual setup)
+
+Run the init command to automatically detect your framework (Laravel, Next.js, Python), create starter rules in `.agent/rules`, and append (NOT OVERWRITE) your primary context files (like `GEMINI.md`, `CLAUDE.md`, or `.cursorrules`) with the necessary instructions.
+
+```bash
+npx dynamic-context-mcp init
+```
+
 ### 1. Prepare your Context Directory
 
 Create a folder (default is `.agent/rules`) in your project root. Add markdown files with YAML frontmatter containing `globs` (either a single string or a list).
