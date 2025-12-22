@@ -15,7 +15,8 @@ When coding with AI, you often have specific guidelines, architectural patterns,
 1. You are working on `src/backend/api.ts`.
 2. The AI calls this tool with that path.
 3. This server finds `backend-guidelines.md` (which matches `src/backend/**/*.ts`).
-4. The AI receives your backend rules _before_ it generates code.
+4. The server also finds `general-ts-guidelines.md` (which matches `*.ts`)
+5. It combines all matching context files and delivers the result to your AI agent _before_ it generates code
 
 ---
 
