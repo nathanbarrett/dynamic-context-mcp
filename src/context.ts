@@ -114,7 +114,7 @@ export class ContextManager {
         if (ctx.trigger !== 'glob' || ctx.globs.length === 0) continue;
         
         // Find the FIRST matching glob pattern
-        const matchedPattern = ctx.globs.find(pattern => minimatch(targetPath, pattern));
+        const matchedPattern = ctx.globs.find(pattern => minimatch(targetPath, pattern, { matchBase: true }));
         
         if (matchedPattern) {
             conditionalMatches.push({ file: ctx, matchedPattern });

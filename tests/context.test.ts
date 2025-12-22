@@ -95,4 +95,25 @@ describe('ContextManager', () => {
     // Cleanup
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
+
+  it('should match *.ts glob against deep paths (bug reproduction)', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gemini-repro-'));
+    
+    // 1. General context targeting *.ts
+    const generalMd = path.join(tmpDir, 'general.md');
+    fs.writeFileSync(generalMd, '---\nglobs: "*.ts"\n---\n# General TS Context');
+
+    // 2. Specific context targeting src/deep/**/*.ts
+    const specificMd = path.join(tmpDir, 'specific.md');
+    fs.writeFileSync(specificMd, '---\nglobs: "src/deep/**/*.ts"\n---\n# Specific Deep Context');
+
+    const manager = new ContextManager(tmpDir);
+    const context = manager.getContextForPath('src/deep/nested/Target.ts');
+
+    // We expect BOTH to be present
+    expect(context).toContain('Specific Deep Context');
+    expect(context).toContain('General TS Context');
+
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
 });
