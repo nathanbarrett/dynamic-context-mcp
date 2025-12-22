@@ -49,22 +49,22 @@ globs: "**/*.css"
 - Use flexbox layout.
 ```
 
-**Example 2: Multiple Globs**
+**Example 2: Multiple Globs & Brace Expansion**
 
-**File:** `.agent/rules/backend.md`
+**File:** `.agent/rules/frontend.md`
 
 ```markdown
 ---
 trigger: glob
 globs:
-  - "src/backend/**/*.ts"
-  - "config/**/*.json"
+  - "src/helpers/**/*.ts"
+  - "resources/js/**/*.{vue,ts}" # Matches both .vue and .ts files
 ---
 
-# Backend Rules
+# Frontend Rules
 
 - Ensure strict type checking.
-- Do not commit secrets in config files.
+- Prefer Composition API for Vue files.
 ```
 
 **Example 3: Always Trigger**
