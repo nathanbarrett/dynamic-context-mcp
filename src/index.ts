@@ -18,7 +18,7 @@ if (args.length > 0 && args[0] === 'init') {
   // Initialize the server
   const server = new McpServer({
     name: "dynamic-context-mcp",
-    version: "1.0.8",
+    version: "1.0.9",
   });
 
   // Determine where the markdown files live.
