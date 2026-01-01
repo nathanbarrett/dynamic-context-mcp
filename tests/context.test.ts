@@ -84,14 +84,30 @@ describe('ContextManager', () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gemini-test-'));
     const badFile = path.join(tmpDir, 'bad.md');
     fs.writeFileSync(badFile, '---\nglobs: *.php\n---\nBad content'); // invalid yaml
-    
+
     const manager = new ContextManager(tmpDir);
     const context = manager.getContextForPath('test.php');
-    
+
     // Should now return context because we handle the unquoted glob
     expect(context).toContain('Bad content');
     expect(context).toContain('START CONTEXT FROM MATCHING GLOB PATTERN: *.php');
-    
+
+    // Cleanup
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it('should handle unquoted globs not starting with asterisk', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'unquoted-test-'));
+    const vueFile = path.join(tmpDir, 'vue-context.md');
+    fs.writeFileSync(vueFile, '---\nglobs: resources/js/**/*.{ts,vue}\n---\nVue Context'); // unquoted glob
+
+    const manager = new ContextManager(tmpDir);
+    const context = manager.getContextForPath('resources/js/Pages/Auth/Register.vue');
+
+    // Should return context because we handle the unquoted glob
+    expect(context).toContain('Vue Context');
+    expect(context).toContain('START CONTEXT FROM MATCHING GLOB PATTERN: resources/js/**/*.{ts,vue}');
+
     // Cleanup
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
