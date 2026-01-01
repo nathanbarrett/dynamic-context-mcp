@@ -31,12 +31,12 @@ export class ContextManager {
       try {
         let fileContent = fs.readFileSync(filePath, 'utf-8');
         
-        // Regex to find unquoted globs starting with *
-        // Matches "globs: *.foo" but not "globs: "*.foo""
+        // Regex to find unquoted globs (any glob pattern without quotes)
+        // Matches "globs: *.foo" or "globs: resources/**/*.ts" but not "globs: "*.foo""
         // Capture group 1: Newline or start of string
         // Capture group 2: The key "globs:" and whitespace
-        // Capture group 3: The unquoted glob starting with *
-        const unquotedGlobRegex = /(^|\r?\n)(\s*globs:\s*)(\*.*?)(\r?\n|$)/;
+        // Capture group 3: The unquoted glob pattern (not starting with quotes, brackets, or hyphens)
+        const unquotedGlobRegex = /(^|\r?\n)(\s*globs:\s*)([^"\[\-\s].*?)(\r?\n|$)/;
         const match = fileContent.match(unquotedGlobRegex);
         let capturedGlob: string | null = null;
 
