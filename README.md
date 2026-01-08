@@ -122,6 +122,10 @@ This project uses dynamic context mcp to deliver "just in time" context for file
 
 - Before you read, create, or edit a file, check for dynamic context by requesting the `dynamic-context.get_context_for_file` tool with the file path as input.
 - If dynamic context is available, read it carefully to understand important details about how to work with that file.
+- dynamic context mcp takes a file path as input and goes through all context files that match that path (by glob patterns) to compile relevant context for that file
+- file paths must be relative to the project root i.e. `resources/js/components/MyComponent.vue` and NOT `/absolute/path/to/project/resources/js/components/MyComponent.vue`
+- dynamic context mcp does NOT take a folder path as input. If no file exists at that path, then you can create a fake file name and extension like `path/to/fakefile.txt` to check for context for that folder.
+- Group context for files that have the same path and extension. If you are working with multiple files that have the same path and extension then assume that the compiled context is the same every time and use the same context for all of them.
 
 </CRITICAL_INSTRUCTION>
 

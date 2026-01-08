@@ -5,7 +5,8 @@ import { z } from "zod";
 import { ContextManager } from "./context.js";
 import { resolveContextDir } from "./utils.js";
 import { initCommand } from "./commands/init.js";
-import path from "path";
+
+const packageVersion = "1.0.11";
 
 // Check for CLI commands
 const args = process.argv.slice(2);
@@ -18,7 +19,7 @@ if (args.length > 0 && args[0] === 'init') {
   // Initialize the server
   const server = new McpServer({
     name: "dynamic-context-mcp",
-    version: "1.0.10",
+    version: packageVersion,
   });
 
   // Determine where the markdown files live.
