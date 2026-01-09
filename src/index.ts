@@ -3,10 +3,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { ContextManager } from "./context.js";
-import { resolveContextDir } from "./utils.js";
+import { resolveContextDir, validateFilePath } from "./utils.js";
 import { initCommand } from "./commands/init.js";
 
-const packageVersion = "1.0.11";
+// Should be the same as the version in package.json
+const packageVersion = "1.0.12";
 
 // Check for CLI commands
 const args = process.argv.slice(2);
@@ -20,6 +21,7 @@ if (args.length > 0 && args[0] === 'init') {
   const server = new McpServer({
     name: "dynamic-context-mcp",
     version: packageVersion,
+    description: "MCP server for dynamic context injection based on glob patterns. Input 'path/to/potentialOrExistingFile.txt' (without quotes) where 'path' is relative to the project root to check for context for a folder.",
   });
 
   // Determine where the markdown files live.
@@ -39,6 +41,15 @@ if (args.length > 0 && args[0] === 'init') {
       },
     },
     async ({ filePath }) => {
+      // Validate input
+      const validationError = validateFilePath(filePath);
+      if (validationError) {
+        return {
+          content: [{ type: "text", text: validationError }],
+          isError: true,
+        };
+      }
+
       try {
         const context = contextManager.getContextForPath(filePath);
         return {
